@@ -1,0 +1,89 @@
+import java.io.*;
+import java.net.*;
+import java.util.concurrent.*;
+
+public class Server {
+    private static String str;
+    private static int N;
+
+    public static void main(String[] args) throws IOException {
+
+
+//two arguments - string and N
+
+
+
+        if (args.length != 2) {
+            System.err.println("Usage: java Server <port number>");
+            System.exit(1);
+        }
+
+        int portNumber = Integer.parseInt(args[0]);
+
+
+        int maxClients = Integer.parseInt(args[1]);
+
+//create ServerSocket object 
+
+
+
+try(
+        ServerSocket serverSocket = new ServerSocket(portNumber);
+        ExecutorService pool = Executors.newFixedThreadPool(maxClients);
+
+
+BufferedReader in = new BufferedReader(
+               new InputStreamReader(clientSocket.getInputStream()));
+
+
+//        BufferedReader consoleReader = new BufferedReader(new //InputStreamReader(System.in));
+)
+        System.out.print("Enter a string to send to clients: ");
+        str = consoleReader.readLine();
+        System.out.print("Enter a positive integer N: ");
+        N = Integer.parseInt(consoleReader.readLine());
+
+
+
+//communicates w client by reading from and writing to socket 
+	while((inputLine = in.readLine()) != null (new character?) {
+		
+
+
+
+}
+
+
+        while (true) {
+            Socket clientSocket = serverSocket.accept();
+            pool.execute(new ClientHandler(clientSocket));
+        }
+    }
+
+    private static class ClientHandler implements Runnable {
+        private Socket clientSocket;
+
+        public ClientHandler(Socket socket) {
+            this.clientSocket = socket;
+        }
+
+        @Override
+        public void run() {
+            try {
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                for (int i = 0; i < N; i++) {
+                    if (i == N - 1) {
+                        out.print(str + "\n");  // Last transmission ends with a newline
+                    } else {
+                        out.print(str);  // No newline for the first N-1 transmissions
+                    }
+                    out.flush();
+                    Thread.sleep(1000);  // 1-second delay between transmissions
+                }
+                clientSocket.close();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}

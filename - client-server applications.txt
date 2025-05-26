@@ -1,0 +1,305 @@
+- client-server applications 
+	- server provides some service - processing database queries/sending out current stock prices
+	- client uses service provided by server - displaying database query to user - make stock purchase recommendations to an investor 
+= TCP - reliable, point-to-point communication channel 
+	- client-server applications on the Internet use to communicate w each other
+	- TO DO SO
+		- client program and server program establish a connection to one another
+		- each program binds a socket to its end of the connection
+		- TO COMMUNICATE - client and server each reads and writes to the socket bound to the connection 
+
+WHAT IS A SOCKET
+- one end-point of a two-way communication link between two programs running on the network 
+- socket classes used to represent connection between a client program and a server program
+
+- normally server runs on specific computer and has socket bound to a specific port number
+- server waits, listens to socket for client to make connection request
+
+
+CLIENT-SIDE: 
+	- client knows hostname of machine on which server is running
+		- knows port number on which server is listening
+	- make connection request - client tries to rendezvous w server on server's machine and port 
+	- client needs to identify itself to server so it binds to local port number 
+	- server should accept connection if everything is right
+	- if accepted - server gets new socket bound to same local port and has its remote endpoint set to the address and port of the client
+		- needs the new socket to continue to listen to the original socket for connection requests while tending to needs of connected client 
+	- if connection is accepted on client side - socket is successfully created and client uses it to communicate w server
+
+
+
+
+
+
+ENDPOINT - combination of an IP address and port number 
+	- every TCP connection can be identified by its two endpoints
+	- can have multiple connections between host and server
+
+
+
+
+
+JAVA NET PACKAGE - provides two classes
+- Socket - implement client side of connection
+	- sits on top of a platform-dependent implementation 
+- ServerSocket - implement server side of connection
+
+
+
+
+
+READING from and WRITING to a SOCKET
+--- program establish connection to server using Socket class and client can send data to and receive data from server through the socket--
+
+	client: EchoClient 
+		- connects to an echo server
+		- echo server receives data from client and echos it back 
+		- creates a socket to get connection to echo server
+		- reads input from user on STI and forwards text to echo server by writing text to the socket 
+		- client reads and displays data passed back to it (echo) from server
+
+
+
+	server: EchoServer 
+		- implements echo server
+		- echos input back through socket to client
+
+
+CODE   EXAMPLE 
+
+String hostName = args[0];
+int portNumber = Integer.parseInt(args[1]);
+
+try (
+    Socket echoSocket = new Socket(hostName, portNumber);        // 1st statement
+    PrintWriter out =                                            // 2nd statement
+        new PrintWriter(echoSocket.getOutputStream(), true);
+    BufferedReader in =                                          // 3rd statement 
+        new BufferedReader(
+            new InputStreamReader(echoSocket.getInputStream()));
+    BufferedReader stdIn =                                       // 4th statement 
+        new BufferedReader(
+            new InputStreamReader(System.in))
+)
+
+
+
+1) creates new Socket object - names it echoSocket 
+	Socket constructor requires name of the computer and port number you want to connect to
+	Host name should be a fully qualified IP name of computer wanting to connect to
+
+	
+
+2) gets socket's output stream and opens a PrintWriter on it name out
+
+
+3) gets socket's input stream and opens a BufferedReader on it named in 
+
+
+
+
+String userInput;
+while ((userInput = stdIn.readLine()) != null) {
+    out.println(userInput);
+    System.out.println("echo: " + in.readLine());
+}
+
+
+- while loop reads a line @ which time from the standard input stream with the BufferedReader object stdIn (created in fourth statement) 
+
+- loop sends line to server by writing it to PrintWriter connected to the socket 
+
+
+
+- last statement in loop reads a line of info from the BufferedReader connected to the socket 
+- readLine method waits until server echos the information back to EchoClient 
+- readline returns - EchoClient prints out information to standard output
+
+
+
+
+1. Open a socket.
+2. Open an input stream and output stream to the socket.
+3. Read from and write to the stream according to the server's protocol.
+4. Close the streams.
+5. Close the socket.
+
+
+
+
+
+WRITING the SERVER SIDE of a SOCKET
+
+-----write a server and client that goes with it-----
+----- client/server pair  tell knock knock jokes -----
+------------two independently running Java programs: client and server program ----------
+
+
+- client program is implemented by a single class - KnockKnockClient
+- server program is implemented by two classes: 
+	1. KnockKnockServer - contains main method for server program and performs work of listening to the port, establishing connections, and reading from/writing to the socket 
+
+	2. KnockKnockProtocol - serves up jokes, keeps track of current joke, current states, returns various text pieces 
+		- implements the protocol - language client and server have agreed to use to communicate 
+
+
+
+KNOCK KNOCK SERVER 
+- create new ServerSocket object to listen on specific port 
+	java KnockKnockServer 4444
+
+
+CODE ALERT 
+
+int portNumber = Integer.parseInt(args[0]);
+
+try ( 
+    ServerSocket serverSocket = new ServerSocket(portNumber);
+    Socket clientSocket = serverSocket.accept();
+    PrintWriter out =
+        new PrintWriter(clientSocket.getOutputStream(), true);
+    BufferedReader in = new BufferedReader(
+        new InputStreamReader(clientSocket.getInputStream()));
+) {
+	
+
+
+- server creates ServerSocket object in try-with-resources statement
+
+- ServerSocket = java.net class
+	- provides system-independent implementation of server side of client/server connection
+
+
+- constructor for ServerSocket throws exception if it can't listen on specified port 
+
+- if server successfully binds to its port: 
+	- ServerSocket object = successfully created
+	- server can accept connection from a client 
+
+
+
+clientSocket = serverSocket.accept();
+
+
+- accept method waits until client starts up and requests a connection on host and port of this server
+
+
+- when connection is successfully established - accept method returns a new Socket object which is bound to same local port and has its remote address and remote port set to that of the client 
+
+- server can communicate w client over new Socket and continue to listen for client connection requests on original ServerSocket 
+
+
+
+CODETO COMMUNICATE W CLIENT
+
+try (
+    // ...
+    PrintWriter out =
+        new PrintWriter(clientSocket.getOutputStream(), true);
+    BufferedReader in = new BufferedReader(
+        new InputStreamReader(clientSocket.getInputStream()));
+) {
+    String inputLine, outputLine;
+            
+    // Initiate conversation with client
+    KnockKnockProtocol kkp = new KnockKnockProtocol();
+    outputLine = kkp.processInput(null);
+    out.println(outputLine);
+
+    while ((inputLine = in.readLine()) != null) {
+        outputLine = kkp.processInput(inputLine);
+        out.println(outputLine);
+        if (outputLine.equals("Bye."))
+            break;
+    }
+
+
+
+
+
+1. gets socket's input and output stream and opens readers/writers on them
+2. initiates communication w client by writing to socket 
+3. communicates w client by reading from and writing to socket (while loop) 
+
+
+
+
+
+
+2) code creates KnockKnockProtocol obj - keeps track of current joke and current state within joke, etc.
+
+- after KnockKnockProtocol created - KnockKnockProtocol's processInput method is called to get first message that server sends to client 
+- server then writes the information to the PrintWriter connected to the client socket - sending message to client 
+
+
+
+
+3) while loop 
+	- as long as server and client want to keep talking - server reads from and write to the socket 
+- while loop iterates on read from input stream
+- readLine method waits until client responds by writing something to tis output stream 
+- client responds - server passes response to KnockKnockProtocol object and asks it for a reply
+- server sends reply to client via output stream connected to the socket - uses println
+
+
+
+
+SERVER 
+
+
+
+
+import java.net.*;
+import java.io.*;
+
+public class Server {
+    public static void main(String[] args) throws IOException {
+        
+        if (args.length != 1) {
+            System.err.println("Usage: java Server <port number>");
+            System.exit(1);
+        }
+
+        int portNumber = Integer.parseInt(args[0]);
+
+	//
+
+        try ( 
+            ServerSocket serverSocket = new ServerSocket(portNumber);
+            Socket clientSocket = serverSocket.accept();
+            PrintWriter out =
+                new PrintWriter(clientSocket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(
+                new InputStreamReader(clientSocket.getInputStream()));
+        ) {
+        
+            String inputLine, outputLine;
+            
+            // Initiate conversation with client
+            KnockKnockProtocol kkp = new KnockKnockProtocol();
+            outputLine = kkp.processInput(null);
+            out.println(outputLine);
+
+            while ((inputLine = in.readLine()) != null) {
+                outputLine = kkp.processInput(inputLine);
+                out.println(outputLine);
+                if (outputLine.equals("Bye."))
+                    break;
+            }
+        } catch (IOException e) {
+            System.out.println("Exception caught when trying to listen on port "
+                + portNumber + " or listening for a connection");
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
