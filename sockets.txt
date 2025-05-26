@@ -1,0 +1,21 @@
+Sockets 
+- URLs and URLConnections provide high-level mechanism for accessing resources on the Internet
+- program like client-server application requres lower-levle network communication 
+- client-server applications
+	- server provides some service -- processing database queries, sending out current stock prices
+	- clinet uses service provided by server -- displaying database query results to user or making stock purchase recommendations to investor
+	- communication must be reliable 
+	- no data can be dropped - must arrive on client side in same order in which server sent it
+
+
+TCP 
+- provides reliable point-to-point communication channel 
+	- client server applications on internet use to communicate
+	- client program and server program establish a connection to one another
+	- each program binds a socket to its end of the conneciton 
+	- client and server each reads from and writes to the socket bound to the connection 
+	
+
+
+WHAT IS A SOCKET? 
+- socket is one end-point of a two-way communication link between two porgrams running on the network
