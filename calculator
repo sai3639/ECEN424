@@ -1,0 +1,156 @@
+import java.util.Scanner;
+
+//class = object constructor
+//object is created from a class
+//java fields are variables within java classes
+//java method = set of instructions that perform a task
+//private members = only accessible inside the class they are declared
+public class Calculator {
+    //Instance Variables
+
+    private String name;
+
+    //method 1
+    public void setname(String N) {
+        this.name = N;
+    }
+
+    //method 2
+    public String getName() {
+        //Scanner class = used to get user input
+        Scanner n = new Scanner(System.in); // create Scanner object
+        System.out.println("Enter group name:");
+
+        String name = n.nextLine(); //Reads user input
+        System.out.println("Welcome to the Calculator designed by Group" + name);
+        return name;
+    }
+
+    //method 3
+    public Float addition(Float A, Float B) {
+        Float ans = A + B;
+        System.out.println("The sum of argument " + A + " and argument " + B + " is " + ans);
+        return ans;
+    }
+
+    //method 4
+    public Float subtraction(Float A, Float B) {
+        Float ans = A - B;
+        System.out.println("The difference of argument " + A + " and argument " + B + " is " + ans);
+        return ans;
+    }
+
+    //method 5
+    public Float multiplication(Float A, Float B) {
+        Float ans = A * B;
+        System.out.println("The product of argument " + A + " and argument " + B + " is " + ans);
+        return ans;
+    }
+
+    //main
+    public static void main(String[] args) {
+        //create an object using new keyword
+        Calculator mycalc = new Calculator();
+        String input = mycalc.getName();
+        mycalc.setname(input);
+
+        //take input from the user
+        String operation;
+        //declare variables for arguments
+        String arg1;
+        String arg2;
+
+        float arg1fl;
+        float arg2fl;
+
+        //create Scanner object
+        Scanner arg = new Scanner(System.in);
+        operation = arg.nextLine();
+
+        //while loop - doesn't terminate until Q pressed
+        while (!"Q".equals(operation)) {
+
+            System.out.println("Enter A to Add, S to Subtract, M to Multiply, and Q to quit");
+            operation = arg.nextLine();
+
+            //switch statements for each case
+            switch (operation) {
+                case "A" -> {
+                    System.out.println("Enter argument 1");
+                    arg1 = arg.nextLine();
+                    while (true) {
+                        try {                                //try block used to correct input if not a number
+                            arg1fl = Float.parseFloat(arg1); //convert string to float 
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input, please enter a number:");
+                            arg1 = arg.nextLine();
+                        }
+                    }
+                    System.out.println("Enter argument 2");
+                    arg2 = arg.nextLine();
+                    while (true) {
+                        try {                                //try block used to correct input if not a number
+                            arg2fl = Float.parseFloat(arg2); //convert string to float 
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input, please enter a number:");
+                            arg2 = arg.nextLine();
+                        }
+                    }
+                    mycalc.addition(arg1fl, arg2fl);
+                }
+                case "S" -> {
+                    System.out.println("Enter argument 1");
+                    arg1 = arg.nextLine();
+                    while (true) {
+                        try {                                //try block used to correct input if not a number
+                            arg1fl = Float.parseFloat(arg1); //convert string to float 
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input, please enter a number:");
+                            arg1 = arg.nextLine();
+                        }
+                    }
+                    System.out.println("Enter argument 2");
+                    arg2 = arg.nextLine();
+                    while (true) {
+                        try {                                //try block used to correct input if not a number
+                            arg2fl = Float.parseFloat(arg2); //convert string to float 
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input, please enter a number:");
+                            arg2 = arg.nextLine();
+                        }
+                    }
+                    mycalc.subtraction(arg1fl, arg2fl);
+                }
+                case "M" -> {
+                    System.out.println("Enter argument 1");
+                    arg1 = arg.nextLine();
+                    while (true) {
+                        try {                                //try block used to correct input if not a number
+                            arg1fl = Float.parseFloat(arg1); //convert string to float 
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input, please enter a number:");
+                            arg1 = arg.nextLine();
+                        }
+                    }
+                    System.out.println("Enter argument 2");
+                    arg2 = arg.nextLine();
+                    while (true) {
+                        try {                                //try block used to correct input if not a number
+                            arg2fl = Float.parseFloat(arg2); //convert string to float 
+                            break;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input, please enter a number:");
+                            arg2 = arg.nextLine();
+                        }
+                    }
+                    mycalc.multiplication(arg1fl, arg2fl);
+                }
+            }
+        }
+    }
+}
